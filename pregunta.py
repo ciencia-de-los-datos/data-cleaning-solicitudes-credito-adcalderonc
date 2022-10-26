@@ -32,7 +32,7 @@ def clean_data():
     df['barrio']=df.barrio.str.lower().str.replace(' ', '_').str.replace('-', '_').str.replace('.', '')
     df['monto_del_credito']=df.monto_del_credito.str.replace('$', '').str.replace(',', '')
     df['monto_del_credito']=df.monto_del_credito.map(lambda x: float(x))
-    df['línea_credito']=df.línea_credito.str.lower().str.replace(' ', '_').str.replace('-', '_')
+    df['línea_credito']=df.línea_credito.str.lower().str.replace('_', ' ').str.replace('-', ' ')
 
     df.dropna(inplace= True)
     df.drop_duplicates(inplace= True)
