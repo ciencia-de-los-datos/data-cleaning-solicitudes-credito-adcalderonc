@@ -7,27 +7,35 @@ correctamente. Tenga en cuenta datos faltantes y duplicados.
 
 """
 import pandas as pd
-
+import re
 
 def clean_data():
 
     df = pd.read_csv("solicitudes_credito.csv", sep=";")
-
+    def format_date(str_date):
+        d = re.search(r'(^\d+)\/(\d+)\/(\d+)', str_date, re.IGNORECASE)
+        day = d.group(1)
+        month = d.group(2)
+        year = d.group(3)
+        if len(day)>2:
+            date = year + '/' + month + '/' + day
+            return date
+        else:
+            date = day + '/' + month + '/' + year
+            return date
+    df4=df4[df4.columns[1:]]
+    df['fecha_de_beneficio']=df.fecha_de_beneficio.apply(format_date)
 
     df['sexo']=df.sexo.str.lower()
     df['tipo_de_emprendimiento']=df.tipo_de_emprendimiento.str.lower()
     df['idea_negocio']=df.idea_negocio.str.lower().str.replace(' ', '_').str.replace('-', '_')
     df['barrio']=df.barrio.str.lower().str.replace(' ', '_').str.replace('-', '_').str.replace('.', '')
     df['monto_del_credito']=df.monto_del_credito.str.replace('$', '').str.replace(',', '')
-    df['monto_del_credito']=df.monto_del_credito.map(lambda x: x.replace('.00', '') if re.search(r".\d{2}$", x) else x)
+    df['monto_del_credito']=df.monto_del_credito.map(lambda x: float(x))
     df['línea_credito']=df.línea_credito.str.lower().str.replace(' ', '_').str.replace('-', '_')
 
-    df.dropna(subset=['sexo'], inplace= True)
-    df.dropna(subset=['tipo_de_emprendimiento'], inplace= True)
-    df.dropna(subset=['idea_negocio'], inplace= True)
-    df.dropna(subset=['barrio'], inplace= True)
-    df.dropna(subset=['monto_del_credito'], inplace= True)
-    df.dropna(subset=['línea_credito'], inplace= True)
-    
+    df.dropna(inplace= True)
+    df.drop_duplicates(inplace= True)
+ 
 
     return df
